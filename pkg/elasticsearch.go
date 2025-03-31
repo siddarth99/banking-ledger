@@ -12,7 +12,8 @@ import (
 type ElasticsearchClient interface {
 	// Index indexes a document in Elasticsearch
 	Index(index string, body io.Reader) (*esapi.Response, error)
-
+	// Search searches the index in Elasticsearch
+	Search(indices []string, body io.Reader) (*esapi.Response, error)
 	// Info returns info about the cluster
 	Info() (*esapi.Response, error)
 }
