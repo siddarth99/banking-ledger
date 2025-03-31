@@ -49,14 +49,6 @@ func (e *ElasticsearchWrapper) Search(indices []string, body io.Reader) (*esapi.
 	)
 }
 
-// Get retrieves a document by ID
-func (e *ElasticsearchWrapper) Get(index, id string) (*esapi.Response, error) {
-	return e.client.Get(
-		index,
-		id,
-	)
-}
-
 // Info returns info about the cluster
 func (e *ElasticsearchWrapper) Info() (*esapi.Response, error) {
 	return e.client.Info()
