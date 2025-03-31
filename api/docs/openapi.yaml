@@ -1,0 +1,244 @@
+openapi: 3.1.1
+info:
+  title: Banking API
+  version: 1.0.0
+  description: API for managing bank accounts and transactions
+servers:
+  - url: http://127.0.0.1:8080/
+    description: Test server
+
+paths:
+  /createAccount:
+    post:
+      summary: Create a new bank account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AccountCreateRequest"
+      responses:
+        "202":
+          description: Account creation triggered successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /transact:
+    post:
+      summary: Process a transaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransactionRequest"
+      responses:
+        "200":
+          description: Transaction processed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransactionResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /account/{accountNumber}/transactionHistory:
+    get:
+      summary: Get transaction history for an account
+      parameters:
+        - name: accountNumber
+          in: path
+          required: true
+          schema:
+            type: string
+            example: BR11234567
+            description: Account number for which to retrieve transaction history
+        - name: startDate
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: Start date for transaction history filter
+        - name: endDate
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+          description: End date for transaction history filter
+        - name: pageNumber
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: Page number for paginated results
+      responses:
+        "200":
+          description: Transaction history retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  transsactionHistoryArray:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Transaction"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+components:
+  schemas:
+    AccountCreateRequest:
+      type: object
+      required:
+        - accountHolderName
+        - initialDeposit
+        - branchCode
+      properties:
+        accountHolderName:
+          type: string
+          example: John Doe
+        initialDeposit:
+          type: number
+          format: double
+          minimum: 0
+          example: 1000.00
+        branchCode:
+          type: string
+          example: "BR1"
+          description: 3-character branch code unique for each bank branch
+
+    AccountResponse:
+      type: object
+      properties:
+        referenceID:
+          type: string
+          format: uuid
+          description: Id to use for tracking account creation status
+        createdAt:
+          type: string
+          format: date-time
+
+    TransactionHistoryRequest:
+      type: object
+      required:
+        - accountNumber
+      properties:
+        accountNumber:
+          type: string
+          example: BR11234567
+          description: Account ID for which to retrieve transaction history
+        startDate:
+          type: string
+          format: date-time
+          description: Optional start date to filter transactions
+        endDate:
+          type: string
+          format: date-time
+          description: Optional end date to filter transactions
+        pageNumber:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 1
+          description: Paginate results
+
+    TransactionRequest:
+      type: object
+      required:
+        - accountNumber
+        - amount
+        - type
+      properties:
+        accountNumber:
+          type: string
+        amount:
+          type: number
+          format: double
+          minimum: 0.01
+        type:
+          type: string
+          enum: [DEPOSIT, WITHDRAWAL]
+
+    TransactionResponse:
+      type: object
+      properties:
+        transactionId:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        amount:
+          type: number
+          format: double
+        type:
+          type: string
+          enum: [DEPOSIT, WITHDRAWAL]
+        timestamp:
+          type: string
+          format: date-time
+        description:
+          type: string
+
+    Error:
+      type: object
+      properties:
+        errorCode:
+          type: string
+        message:
+          type: string
+
+  responses:
+    BadRequest:
+      description: Invalid request parameters
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: Account not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    InternalServerError:
+      description: Internal server error occurred
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - BearerAuth: []

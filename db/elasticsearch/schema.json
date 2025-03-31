@@ -1,0 +1,37 @@
+{
+  "index_patterns": ["bank-transactions-*"],
+  "template": {
+    "settings": {
+      "number_of_shards": 30,
+      "number_of_replicas": 1
+    },
+    "mappings": {
+      "properties": {
+        "transaction_id": {
+          "type": "keyword"
+        },
+        "account_number": {
+          "type": "keyword"
+        },
+        "amount": {
+          "type": "float"
+        },
+        "type": {
+          "type": "keyword"
+        },
+        "status": {
+          "type": "keyword"
+        },
+        "timestamp": {
+          "type": "date"
+        },
+        "branch_code": {
+          "type": "keyword"
+        },
+        "balance_after_transaction": {
+          "type": "float"
+        }
+      }
+    }
+  }
+}
