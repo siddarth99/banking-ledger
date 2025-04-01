@@ -84,7 +84,6 @@ func TestGetAccountStatusHandler(t *testing.T) {
 		assert.Equal(t, "ref-123", response.ReferenceID)
 		assert.Equal(t, "ACTIVE", response.Status)
 		assert.Equal(t, "ACC123456", response.AccountNumber)
-		assert.Equal(t, "Account created successfully", response.Message)
 
 		// Verify our expectations were met
 		mockClient.AssertExpectations(t)
@@ -151,7 +150,6 @@ func TestGetAccountStatusHandler(t *testing.T) {
 		assert.Equal(t, "ref-456", response.ReferenceID)
 		assert.Equal(t, "INACTIVE", response.Status)
 		assert.Empty(t, response.AccountNumber)
-		assert.Equal(t, "Account creation in progress", response.Message)
 
 		// Verify our expectations were met
 		mockClient.AssertExpectations(t)

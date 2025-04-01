@@ -14,7 +14,6 @@ type AccountStatusResponse struct {
 	ReferenceID   string `json:"referenceID"`
 	Status        string `json:"status"`
 	AccountNumber string `json:"accountNumber,omitempty"`
-	Message       string `json:"message,omitempty"`
 }
 
 // GetAccountStatusHandler handles requests to check account creation status
@@ -106,12 +105,7 @@ func GetAccountStatusHandler(esClient internal.ElasticsearchClient) gin.HandlerF
 		if response.Status == "ACTIVE" {
 			response.AccountNumber = source["account_number"].(string)
 		}
-
-		// Add message if present
-		if message, ok := source["message"].(string); ok {
-			response.Message = message
-		}
-
+		
 		c.JSON(http.StatusOK, response)
 	}
 }

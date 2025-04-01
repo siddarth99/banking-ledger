@@ -166,13 +166,13 @@ components:
     AccountResponse:
       type: object
       properties:
+        createdAt:
+          type: string
+          format: date-time
         referenceID:
           type: string
           format: uuid
           description: Id to use for tracking account creation status
-        createdAt:
-          type: string
-          format: date-time
 
     AccountStatusResponse:
       type: object
@@ -188,9 +188,6 @@ components:
         accountNumber:
           type: string
           description: Account number (only available when status is COMPLETED)
-        message:
-          type: string
-          description: Additional information about the account status
 
     TransactionHistoryRequest:
       type: object
@@ -236,12 +233,12 @@ components:
     TransactionResponse:
       type: object
       properties:
-        transactionId:
-          type: string
-          format: uuid
         createdAt:
           type: string
           format: date-time
+        transactionId:
+          type: string
+          format: uuid
 
     Transaction:
       type: object
