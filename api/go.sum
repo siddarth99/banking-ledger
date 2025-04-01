@@ -74,8 +74,8 @@ github.com/rabbitmq/amqp091-go v1.10.0 h1:STpn5XsHlHGcecLmMFCtg7mqq0RnD+zFr4uzuk
 github.com/rabbitmq/amqp091-go v1.10.0/go.mod h1:Hy4jKW5kQART1u+JkDTF9YYOQUHXqMuhrgxOEeS7G4o=
 github.com/rogpeppe/go-internal v1.14.1 h1:UQB4HGPB6osV0SQTLymcB4TgvyWu6ZyliaW0tI/otEQ=
 github.com/rogpeppe/go-internal v1.14.1/go.mod h1:MaRKkUm5W0goXpeCfT7UZI6fk/L7L7so1lCWt35ZSgc=
-github.com/siddarth99/banking-ledger/pkg v0.0.0-20250331210108-5a5436e1a212 h1:qNYxjAn/fYA6M2SZSTKIkBemp0YjXGH0J5GCfsjhTrU=
-github.com/siddarth99/banking-ledger/pkg v0.0.0-20250331210108-5a5436e1a212/go.mod h1:uHOWzeNdQ/w/ZDizvk+fAzsn/Fe3THebBdUblqzKkec=
+github.com/siddarth99/banking-ledger/pkg v0.0.0-20250401083904-9a8b9321ab89 h1:AT+Syb77NMYeXHgF7R8q5jpj+rl7agntdEKYaWUh8Zg=
+github.com/siddarth99/banking-ledger/pkg v0.0.0-20250401083904-9a8b9321ab89/go.mod h1:X2Gs15ZzKbaPkYfm+G0qR2QvddJkCXi6cZ2RPfLmZnE=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.4.0/go.mod h1:YvHI0jy2hoMjB+UWwv71VJQ9isScKT/TqJzVSSt89Yw=
 github.com/stretchr/objx v0.5.0/go.mod h1:Yh+to48EsGEfYuaHDzXPcE3xhTkx73EhmCGUpEOglKo=

@@ -93,10 +93,22 @@ paths:
               schema:
                 type: object
                 properties:
-                  transsactionHistoryArray:
+                  accountNumber:
+                    type: string
+                    example: BR11234567
+                    description: Account number for which to retrieve transaction history
+                  transactions:
                     type: array
                     items:
                       $ref: "#/components/schemas/Transaction"
+                  totalCount:
+                    type: integer
+                    description: Total number of transactions
+                    example: 1
+                  currentPage:
+                    type: integer
+                    description: Current page number
+                    example: 1
         "400":
           $ref: "#/components/responses/BadRequest"
         "404":
@@ -200,11 +212,18 @@ components:
         type:
           type: string
           enum: [DEPOSIT, WITHDRAWAL]
+        status:
+          type: string
+          enum: [COMPLETED, FAILED]
+        updatedBalance:
+          type: number
+          format: double
         timestamp:
           type: string
           format: date-time
         description:
           type: string
+          example: "Deposit of 1000.00"
 
     Error:
       type: object

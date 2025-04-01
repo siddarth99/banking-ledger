@@ -13,6 +13,17 @@ import (
 
 // TransactionHistoryItem represents a single transaction in the history
 type TransactionHistoryItem struct {
+	TransactionID           string    `json:"id"`
+	Amount                  float64   `json:"amount"`
+	TransactionType         string    `json:"type"`
+	Status                  string    `json:"status"`
+	Timestamp               time.Time `json:"timestamp"`
+	BalanceAfterTransaction float64   `json:"updatedBalance"`
+	Description             string    `json:"description,omitempty"`
+}
+
+// EsResponseItem represents a single document in the Elasticsearch response
+type EsResponseItem struct {
 	TransactionID           string    `json:"transaction_id"`
 	AccountNumber           string    `json:"account_number"`
 	Amount                  float64   `json:"amount"`
@@ -30,7 +41,6 @@ type TransactionHistoryResponse struct {
 	Transactions  []TransactionHistoryItem `json:"transactions"`
 	TotalCount    int                      `json:"totalCount"`
 	CurrentPage   int                      `json:"currentPage"`
-	ItemsPerPage  int                      `json:"itemsPerPage"`
 }
 
 // GetTransactionHistoryHandler returns a handler for querying transaction history
@@ -126,7 +136,7 @@ func GetTransactionHistoryHandler(esClient internal.ElasticsearchClient) gin.Han
 					Value int `json:"value"`
 				} `json:"total"`
 				Hits []struct {
-					Source TransactionHistoryItem `json:"_source"`
+					Source EsResponseItem `json:"_source"`
 				} `json:"hits"`
 			} `json:"hits"`
 		}
@@ -142,7 +152,17 @@ func GetTransactionHistoryHandler(esClient internal.ElasticsearchClient) gin.Han
 		// Extract transactions from the response
 		transactions := make([]TransactionHistoryItem, 0, len(esResponse.Hits.Hits))
 		for _, hit := range esResponse.Hits.Hits {
-			transactions = append(transactions, hit.Source)
+			transactionHistoryItem := TransactionHistoryItem{
+				TransactionID:           hit.Source.TransactionID,
+				Amount:                  hit.Source.Amount,
+				TransactionType:         hit.Source.TransactionType,
+				Status:                  hit.Source.Status,
+				Timestamp:               hit.Source.Timestamp,
+				BalanceAfterTransaction: hit.Source.BalanceAfterTransaction,
+				Description:             hit.Source.Description,
+			}
+
+			transactions = append(transactions, transactionHistoryItem)
 		}
 
 		// Build the response
@@ -151,7 +171,6 @@ func GetTransactionHistoryHandler(esClient internal.ElasticsearchClient) gin.Han
 			Transactions:  transactions,
 			TotalCount:    esResponse.Hits.Total.Value,
 			CurrentPage:   page,
-			ItemsPerPage:  limit,
 		}
 
 		c.JSON(http.StatusOK, response)

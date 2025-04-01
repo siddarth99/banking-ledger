@@ -3,12 +3,11 @@ package processor
 import (
 	"time"
 
-	"github.com/jackc/pgx/v5"
 	internal "github.com/siddarth99/banking-ledger/pkg"
 )
 
 type ProcessWorker struct {
-	PgxConn *pgx.Conn
+	PgxConn internal.PgDBConnection
 	EsConn  internal.ElasticsearchClient
 }
 

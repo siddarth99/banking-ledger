@@ -13,6 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	internal "github.com/siddarth99/banking-ledger/pkg"
 )
 
 // Test for TransactionHandler
@@ -22,7 +23,7 @@ func TestTransactionHandler(t *testing.T) {
 
 	t.Run("Valid request should return 200", func(t *testing.T) {
 		// Setup mock channel
-		mockChannel := new(MockAMQPChannel)
+		mockChannel := new(internal.MockAMQPChannel)
 		mockChannel.On("PublishWithContext",
 			mock.Anything, "", "transaction_queue", false, false, mock.Anything).Return(nil)
 
@@ -61,7 +62,7 @@ func TestTransactionHandler(t *testing.T) {
 
 	t.Run("Invalid request should return 400", func(t *testing.T) {
 		// Setup mock channel
-		mockChannel := new(MockAMQPChannel)
+		mockChannel := new(internal.MockAMQPChannel)
 
 		// Create an invalid request (missing required fields)
 		invalidRequest := TransactionRequest{
@@ -89,7 +90,7 @@ func TestTransactionHandler(t *testing.T) {
 
 	t.Run("Publishing error should return 500", func(t *testing.T) {
 		// Setup mock channel that returns an error
-		mockChannel := new(MockAMQPChannel)
+		mockChannel := new(internal.MockAMQPChannel)
 		mockChannel.On("PublishWithContext",
 			mock.Anything, "", "transaction_queue", false, false, mock.Anything).Return(errors.New("publish error"))
 
@@ -124,7 +125,7 @@ func TestTransactionHandler(t *testing.T) {
 func TestCreateTransaction(t *testing.T) {
 	t.Run("Successful transaction creation", func(t *testing.T) {
 		// Setup mock channel
-		mockChannel := new(MockAMQPChannel)
+		mockChannel := new(internal.MockAMQPChannel)
 		mockChannel.On("PublishWithContext",
 			mock.Anything, "", "test_queue", false, false, mock.Anything).Return(nil)
 
@@ -153,7 +154,7 @@ func TestCreateTransaction(t *testing.T) {
 
 	t.Run("Publishing error", func(t *testing.T) {
 		// Setup mock channel that returns an error
-		mockChannel := new(MockAMQPChannel)
+		mockChannel := new(internal.MockAMQPChannel)
 		mockChannel.On("PublishWithContext",
 			mock.Anything, "", "test_queue", false, false, mock.Anything).Return(errors.New("publish error"))
 
