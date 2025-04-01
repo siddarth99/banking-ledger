@@ -44,6 +44,7 @@ func (p *TransactionProcessor) transact(ctx context.Context) error {
 	}
 
 	p.Data.BranchCode = branchCode
+	p.Data.AvailableBalance = currentBalance
 
 	// Calculate new balance based on transaction type
 	var newBalance float64
