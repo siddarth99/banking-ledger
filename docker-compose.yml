@@ -1,5 +1,3 @@
-version: '3.8'  # Adding explicit version for compatibility
-
 services:
   rabbitmq:
     image: rabbitmq:4.0-management
@@ -56,9 +54,12 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - rabbitmq
-      - postgres
-      - elasticsearch
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
     environment:
       - DB_HOST=postgres
       - DB_PORT=5432
@@ -81,9 +82,12 @@ services:
       context: ./workers
       dockerfile: Dockerfile
     depends_on:
-      - rabbitmq
-      - postgres
-      - elasticsearch
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
     environment:
       - DB_HOST=postgres
       - DB_PORT=5432
@@ -104,9 +108,12 @@ services:
       context: ./workers
       dockerfile: Dockerfile
     depends_on:
-      - rabbitmq
-      - postgres
-      - elasticsearch
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
     environment:
       - DB_HOST=postgres
       - DB_PORT=5432
