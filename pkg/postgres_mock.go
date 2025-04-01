@@ -19,16 +19,24 @@ type MockPgDBConnection struct {
 	CopyFromFunc func(ctx context.Context, tableName pgx.Identifier, columnNames []string, rowProvider pgx.CopyFromSource) (int64, error)
 	QueryFunc    func(ctx context.Context, sql string, args ...any) (pgx.Rows, error)
 	SendBatchFunc func(ctx context.Context, b *pgx.Batch) pgx.BatchResults
+	LargeObjectsFunc func() pgx.LargeObjects
+	PrepareFunc func(ctx context.Context, name string, sql string) (*pgconn.StatementDescription, error)
 }
 
 // LargeObjects implements pgx.Tx.
 func (m *MockPgDBConnection) LargeObjects() pgx.LargeObjects {
-	panic("unimplemented")
+	if m.LargeObjectsFunc != nil {
+		return m.LargeObjectsFunc()
+	}
+	return pgx.LargeObjects{}
 }
 
 // Prepare implements pgx.Tx.
 func (m *MockPgDBConnection) Prepare(ctx context.Context, name string, sql string) (*pgconn.StatementDescription, error) {
-	panic("unimplemented")
+	if m.PrepareFunc != nil {
+		return m.PrepareFunc(ctx, name, sql)
+	}
+	return nil, nil
 }
 
 // Query implements pgx.Tx.
