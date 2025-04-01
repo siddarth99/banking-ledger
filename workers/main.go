@@ -43,10 +43,10 @@ func main() {
 		panic(err)
 	}
 
-	msgs, err := amqpChannel.Consume(
+	msgsChan, err := amqpChannel.Consume(
 		queue.Name, // queueConsume
 		"",         // consumer
-		true,       // auto-ack
+		false,       // auto-ack
 		false,      // exclusive
 		false,      // no-local
 		false,      // no-wait
@@ -110,7 +110,7 @@ func main() {
 			defer waitGroup.Done()
 			log.Printf("Worker %d started", workerID)
 			
-			for d := range msgs {
+			for d := range msgsChan {
 				log.Printf("Worker %d received a message: %s", workerID, d.Body)
 				
 				switch os.Getenv("RABBITMQ_QUEUE_NAME") {
@@ -121,6 +121,7 @@ func main() {
 					
 					if err != nil {
 						log.Printf("Error: %s\n", err)
+						d.Ack(false)
 						continue
 					}
 					
@@ -137,12 +138,14 @@ func main() {
 					if err != nil {
 						log.Println(err)
 					}
+					d.Ack(false)
 				case "transaction_processor":
 					var transactionInfo processor.TransactionData
 					err := json.Unmarshal(d.Body, &transactionInfo)
 					
 					if err != nil {
 						log.Println(err)
+						d.Ack(false)
 						continue
 					}
 					
@@ -157,9 +160,8 @@ func main() {
 					err = processWorker.ProcessTransaction(context.Background())
 					if err != nil {
 						log.Println(err)
-						continue
 					}
-					log.Println("Transaction Processed Successfully")
+					d.Ack(false)
 				}
 			}
 		}(i, &wg)
