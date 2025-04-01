@@ -63,6 +63,7 @@ The API is documented using OpenAPI. You can access the Swagger UI at:
 ```
 http://localhost:9090
 ```
+The Below APIs are callable through the Swagger UI. 
 
 ### API Usage Examples
 
