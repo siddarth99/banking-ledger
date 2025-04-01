@@ -57,7 +57,7 @@ func GetTransactionHistoryHandler(esClient internal.ElasticsearchClient) gin.Han
 
 		// Parse query parameters
 		page := 1
-		if pageParam := c.Query("page"); pageParam != "" {
+		if pageParam := c.Query("pageNumber"); pageParam != "" {
 			fmt.Sscanf(pageParam, "%d", &page)
 			if page < 1 {
 				page = 1

@@ -64,8 +64,8 @@ paths:
             schema:
               $ref: "#/components/schemas/TransactionRequest"
       responses:
-        "200":
-          description: Transaction processed successfully
+        "202":
+          description: Transaction processing triggered successfully
           content:
             application/json:
               schema:
@@ -88,20 +88,6 @@ paths:
             type: string
             example: BR11234567
             description: Account number for which to retrieve transaction history
-        - name: startDate
-          in: query
-          required: false
-          schema:
-            type: string
-            format: date
-          description: Start date for transaction history filter
-        - name: endDate
-          in: query
-          required: false
-          schema:
-            type: string
-            format: date
-          description: End date for transaction history filter
         - name: pageNumber
           in: query
           required: false
