@@ -4,8 +4,8 @@ info:
   version: 1.0.0
   description: API for managing bank accounts and transactions
 servers:
-  - url: http://127.0.0.1:8080/
-    description: Test server
+  - url: http://localhost:8080/
+    description: Local server
 
 paths:
   /createAccount:
@@ -26,6 +26,31 @@ paths:
                 $ref: "#/components/schemas/AccountResponse"
         "400":
           $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+
+  /account/status/{referenceId}:
+    get:
+      summary: Get account creation status and account number
+      parameters:
+        - name: referenceId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            description: Reference ID received during account creation
+      responses:
+        "200":
+          description: Account status retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountStatusResponse"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
         "500":
           $ref: "#/components/responses/InternalServerError"
 
@@ -148,6 +173,24 @@ components:
         createdAt:
           type: string
           format: date-time
+
+    AccountStatusResponse:
+      type: object
+      properties:
+        referenceID:
+          type: string
+          format: uuid
+          description: Reference ID used for tracking
+        status:
+          type: string
+          enum: [PENDING, COMPLETED, FAILED]
+          description: Current status of account creation
+        accountNumber:
+          type: string
+          description: Account number (only available when status is COMPLETED)
+        message:
+          type: string
+          description: Additional information about the account status
 
     TransactionHistoryRequest:
       type: object

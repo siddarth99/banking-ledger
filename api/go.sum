@@ -15,6 +15,8 @@ github.com/elastic/go-elasticsearch/v8 v8.17.1 h1:bOXChDoCMB4TIwwGqKd031U8OXssmW
 github.com/elastic/go-elasticsearch/v8 v8.17.1/go.mod h1:MVJCtL+gJJ7x5jFeUmA20O7rvipX8GcQmo5iBcmaJn4=
 github.com/gabriel-vasile/mimetype v1.4.8 h1:FfZ3gj38NjllZIeJAmMhr+qKL8Wu+nOoI3GqacKw1NM=
 github.com/gabriel-vasile/mimetype v1.4.8/go.mod h1:ByKUIKGjh1ODkGM1asKUbQZOLGrPjydw3hYPU2YU9t8=
+github.com/gin-contrib/cors v1.7.4 h1:/fC6/wk7rCRtqKqki8lLr2Xq+hnV49aXDLIuSek9g4k=
+github.com/gin-contrib/cors v1.7.4/go.mod h1:vGc/APSgLMlQfEJV5NAzkrAHb0C8DetL3K6QZuvGii0=
 github.com/gin-contrib/sse v1.0.0 h1:y3bT1mUWUxDpW4JLQg/HnTqV4rozuW4tC9eFKTxYI9E=
 github.com/gin-contrib/sse v1.0.0/go.mod h1:zNuFdwarAygJBht0NTKiSi3jRf6RbqeILZ9Sp6Slhe0=
 github.com/gin-gonic/gin v1.10.0 h1:nTuyha1TYqgedzytsKYqna+DfLos46nTv2ygFy86HFU=
@@ -74,8 +76,8 @@ github.com/rabbitmq/amqp091-go v1.10.0 h1:STpn5XsHlHGcecLmMFCtg7mqq0RnD+zFr4uzuk
 github.com/rabbitmq/amqp091-go v1.10.0/go.mod h1:Hy4jKW5kQART1u+JkDTF9YYOQUHXqMuhrgxOEeS7G4o=
 github.com/rogpeppe/go-internal v1.14.1 h1:UQB4HGPB6osV0SQTLymcB4TgvyWu6ZyliaW0tI/otEQ=
 github.com/rogpeppe/go-internal v1.14.1/go.mod h1:MaRKkUm5W0goXpeCfT7UZI6fk/L7L7so1lCWt35ZSgc=
-github.com/siddarth99/banking-ledger/pkg v0.0.0-20250401083904-9a8b9321ab89 h1:AT+Syb77NMYeXHgF7R8q5jpj+rl7agntdEKYaWUh8Zg=
-github.com/siddarth99/banking-ledger/pkg v0.0.0-20250401083904-9a8b9321ab89/go.mod h1:X2Gs15ZzKbaPkYfm+G0qR2QvddJkCXi6cZ2RPfLmZnE=
+github.com/siddarth99/banking-ledger/pkg v0.0.0-20250401100535-60411c86b4f5 h1:2d4pxzkrJHPhUtF/nv3kYnAhtBt37UPP7wpPwk5uQ98=
+github.com/siddarth99/banking-ledger/pkg v0.0.0-20250401100535-60411c86b4f5/go.mod h1:X2Gs15ZzKbaPkYfm+G0qR2QvddJkCXi6cZ2RPfLmZnE=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.4.0/go.mod h1:YvHI0jy2hoMjB+UWwv71VJQ9isScKT/TqJzVSSt89Yw=
 github.com/stretchr/objx v0.5.0/go.mod h1:Yh+to48EsGEfYuaHDzXPcE3xhTkx73EhmCGUpEOglKo=

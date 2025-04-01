@@ -56,7 +56,7 @@ func TransactionHandler(ctx context.Context, amqpChannel internal.AMQPChannel, q
 		}
 
 		// Return a successful response with tracking information
-		c.JSON(http.StatusOK, gin.H{
+		c.JSON(http.StatusAccepted, gin.H{
 			"transactionID": response.TransactionID,
 			"createdAt":     response.CreatedAt,
 		})

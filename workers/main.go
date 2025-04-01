@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"log"
 	"os"
+	"strconv"
 	"sync"
 
 	"fmt"
@@ -96,64 +97,73 @@ func main() {
 	wg := sync.WaitGroup{}
 
 	wg.Add(1)
+	
+	// Start 4 worker goroutines
+	numWorkers := 4 // Default value
+	if workerCount, err := strconv.Atoi(os.Getenv("NUM_WORKERS")); err == nil && workerCount > 0 {
+		numWorkers = workerCount
+	}
 
-	go func(waitGroup *sync.WaitGroup) {
-		defer waitGroup.Done()
-
-		for d := range msgs {
-
-			log.Printf("Received a message: %s", d.Body)
-
-			switch os.Getenv("RABBITMQ_QUEUE_NAME") {
-			case "account_creator":
-				var accountInfo processor.AccountData
-
-				err := json.Unmarshal(d.Body, &accountInfo)
-
-				if err != nil {
-					log.Printf("Error: %s\n", err)
-					continue
+	for i := 0; i < numWorkers; i++ {
+		wg.Add(1)
+		go func(workerID int, waitGroup *sync.WaitGroup) {
+			defer waitGroup.Done()
+			log.Printf("Worker %d started", workerID)
+			
+			for d := range msgs {
+				log.Printf("Worker %d received a message: %s", workerID, d.Body)
+				
+				switch os.Getenv("RABBITMQ_QUEUE_NAME") {
+				case "account_creator":
+					var accountInfo processor.AccountData
+					
+					err := json.Unmarshal(d.Body, &accountInfo)
+					
+					if err != nil {
+						log.Printf("Error: %s\n", err)
+						continue
+					}
+					
+					processWorker := processor.CreateAccountProcessor{
+						ProcessWorker: processor.ProcessWorker{
+							PgxConn: conn,
+							EsConn:  esClient,
+						},
+						Data: accountInfo,
+					}
+					
+					err = processWorker.CreateAccount(context.Background())
+					
+					if err != nil {
+						log.Println(err)
+					}
+				case "transaction_processor":
+					var transactionInfo processor.TransactionData
+					err := json.Unmarshal(d.Body, &transactionInfo)
+					
+					if err != nil {
+						log.Println(err)
+						continue
+					}
+					
+					processWorker := processor.TransactionProcessor{
+						ProcessWorker: processor.ProcessWorker{
+							PgxConn: conn,
+							EsConn:  esClient,
+						},
+						Data: transactionInfo,
+					}
+					
+					err = processWorker.ProcessTransaction(context.Background())
+					if err != nil {
+						log.Println(err)
+						continue
+					}
+					log.Println("Transaction Processed Successfully")
 				}
-
-				processWorker := processor.CreateAccountProcessor{
-					ProcessWorker: processor.ProcessWorker{
-						PgxConn: conn,
-						EsConn:  esClient,
-					},
-					Data: accountInfo,
-				}
-
-				err = processWorker.CreateAccount(context.Background())
-
-				if err != nil {
-					log.Println(err)
-				}
-			case "transaction_processor":
-				var transactionInfo processor.TransactionData
-				err := json.Unmarshal(d.Body, &transactionInfo)
-
-				if err != nil {
-					log.Println(err)
-					continue
-				}
-
-				processWorker := processor.TransactionProcessor{
-					ProcessWorker: processor.ProcessWorker{
-						PgxConn: conn,
-						EsConn:  esClient,
-					},
-					Data: transactionInfo,
-				}
-
-				err = processWorker.ProcessTransaction(context.Background())
-				if err != nil {
-					log.Println(err)
-					continue
-				}
-				log.Println("Transaction Processed Successfully")
 			}
-		}
-	}(&wg)
+		}(i, &wg)
+	}
 
 	log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
 

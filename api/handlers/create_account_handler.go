@@ -37,25 +37,25 @@ func CreateAccountHandler(ctx context.Context, amqpChannel internal.AMQPChannel,
 		// Parse and validate the incoming JSON request
 		if err := c.ShouldBindJSON(&accountRequestJson); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
-				"errorCode": http.StatusBadRequest, 
-				"error": err.Error(),
+				"errorCode": http.StatusBadRequest,
+				"error":     err.Error(),
 			})
 			return
 		}
 
 		// Process the account creation request
 		response, err := accountRequestJson.createAccount(ctx, amqpChannel, queueName)
-		
+
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{
-				"errorCode": http.StatusInternalServerError, 
-				"error": err.Error(),
+				"errorCode": http.StatusInternalServerError,
+				"error":     err.Error(),
 			})
 			return
 		}
 
 		// Return a successful response with tracking information
-		c.JSON(http.StatusOK, gin.H{
+		c.JSON(http.StatusAccepted, gin.H{
 			"referenceID": response.ReferenceID,
 			"createdAt":   response.CreatedAt,
 		})
@@ -70,7 +70,7 @@ func (a *AccountRequest) createAccount(ctx context.Context, amqpChannel internal
 	// Generate a unique reference ID for tracking this request
 	a.ReferenceID = uuid.New().String()
 
-	// Create JSON payload 
+	// Create JSON payload
 	requestByteArray, err := json.Marshal(a)
 	if err != nil {
 		// Handle marshaling error
@@ -83,16 +83,16 @@ func (a *AccountRequest) createAccount(ctx context.Context, amqpChannel internal
 		ctx,
 		requestByteArray,
 		amqpChannel,
-		"",         // default exchange
-		queueName,  // routing key = queue name
-		false,      // mandatory - don't require the message to be routed to a queue
-		false,      // immediate - don't require immediate delivery to a consumer
+		"",        // default exchange
+		queueName, // routing key = queue name
+		false,     // mandatory - don't require the message to be routed to a queue
+		false,     // immediate - don't require immediate delivery to a consumer
 	)
 
 	if err != nil {
 		// Handle publishing error
 		fmt.Printf("Error while Publishing account request to queue %s", err.Error())
-		return accountResponse{}, err	
+		return accountResponse{}, err
 	}
 
 	// Return response with tracking ID and timestamp

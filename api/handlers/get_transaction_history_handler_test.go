@@ -1,4 +1,4 @@
-package handlers
+package handlers_test
 
 import (
 	"bytes"
@@ -14,38 +14,11 @@ import (
 
 	"github.com/elastic/go-elasticsearch/v8/esapi"
 	"github.com/gin-gonic/gin"
+	"github.com/siddarth99/banking-ledger/api/handlers"
+	internal "github.com/siddarth99/banking-ledger/pkg"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
-
-// MockElasticsearchClient implements the ElasticsearchClient interface for testing
-type MockElasticsearchClient struct {
-	mock.Mock
-}
-
-func (m *MockElasticsearchClient) Search(indices []string, body io.Reader) (*esapi.Response, error) {
-	args := m.Called(indices, body)
-	if args.Get(0) == nil {
-		return nil, args.Error(1)
-	}
-	return args.Get(0).(*esapi.Response), args.Error(1)
-}
-
-func (m *MockElasticsearchClient) Index(index string, body io.Reader) (*esapi.Response, error) {
-	args := m.Called(index, body)
-	if args.Get(0) == nil {
-		return nil, args.Error(1)
-	}
-	return args.Get(0).(*esapi.Response), args.Error(1)
-}
-
-func (m *MockElasticsearchClient) Info() (*esapi.Response, error) {
-	args := m.Called()
-	if args.Get(0) == nil {
-		return nil, args.Error(1)
-	}
-	return args.Get(0).(*esapi.Response), args.Error(1)
-}
 
 // TestGetTransactionHistoryHandler tests the GetTransactionHistoryHandler function
 func TestGetTransactionHistoryHandler(t *testing.T) {
@@ -55,7 +28,7 @@ func TestGetTransactionHistoryHandler(t *testing.T) {
 	// Test case: Successful retrieval of transaction history
 	t.Run("Success response with transactions", func(t *testing.T) {
 		// Create mock client
-		mockClient := new(MockElasticsearchClient)
+		mockClient := new(internal.MockElasticsearchClient)
 
 		// Create sample Elasticsearch response
 		timestamp := time.Now()
@@ -112,7 +85,7 @@ func TestGetTransactionHistoryHandler(t *testing.T) {
 
 		// Setup router
 		router := gin.New()
-		router.GET("/account/:accountNumber/history", GetTransactionHistoryHandler(mockClient))
+		router.GET("/account/:accountNumber/history", handlers.GetTransactionHistoryHandler(mockClient))
 
 		// Create request
 		req, _ := http.NewRequest("GET", "/account/ACC123/history", nil)
@@ -122,11 +95,10 @@ func TestGetTransactionHistoryHandler(t *testing.T) {
 		// Verify response
 		assert.Equal(t, http.StatusOK, w.Code)
 
-
-		var response TransactionHistoryResponse
+		var response handlers.TransactionHistoryResponse
 		err := json.Unmarshal(w.Body.Bytes(), &response)
 		assert.NoError(t, err)
-		
+
 		fmt.Println(response)
 
 		// Verify response data
@@ -153,10 +125,10 @@ func TestGetTransactionHistoryHandler(t *testing.T) {
 
 	// Test case: Empty account parameter
 	t.Run("Missing account number", func(t *testing.T) {
-		mockClient := new(MockElasticsearchClient)
+		mockClient := new(internal.MockElasticsearchClient)
 
 		router := gin.New()
-		router.GET("/account/:accountNumber/history", GetTransactionHistoryHandler(mockClient))
+		router.GET("/account/:accountNumber/history", handlers.GetTransactionHistoryHandler(mockClient))
 
 		// Create request without account number
 		req, _ := http.NewRequest("GET", "/account//history", nil)
@@ -177,13 +149,13 @@ func TestGetTransactionHistoryHandler(t *testing.T) {
 
 	// Test case: Elasticsearch error
 	t.Run("Elasticsearch client error", func(t *testing.T) {
-		mockClient := new(MockElasticsearchClient)
+		mockClient := new(internal.MockElasticsearchClient)
 
 		// Setup mock to return error
 		mockClient.On("Search", mock.Anything, mock.Anything).Return(nil, errors.New("connection refused"))
 
 		router := gin.New()
-		router.GET("/account/:accountNumber/history", GetTransactionHistoryHandler(mockClient))
+		router.GET("/account/:accountNumber/history", handlers.GetTransactionHistoryHandler(mockClient))
 
 		// Create request
 		req, _ := http.NewRequest("GET", "/account/ACC123/history", nil)
@@ -205,7 +177,7 @@ func TestGetTransactionHistoryHandler(t *testing.T) {
 
 	// Test case: Elasticsearch returns error response
 	t.Run("Elasticsearch error response", func(t *testing.T) {
-		mockClient := new(MockElasticsearchClient)
+		mockClient := new(internal.MockElasticsearchClient)
 
 		// Create error response
 		errorResponseBody := map[string]interface{}{
@@ -224,7 +196,7 @@ func TestGetTransactionHistoryHandler(t *testing.T) {
 		mockClient.On("Search", mock.Anything, mock.Anything).Return(mockResponse, nil)
 
 		router := gin.New()
-		router.GET("/account/:accountNumber/history", GetTransactionHistoryHandler(mockClient))
+		router.GET("/account/:accountNumber/history", handlers.GetTransactionHistoryHandler(mockClient))
 
 		// Create request
 		req, _ := http.NewRequest("GET", "/account/ACC123/history", nil)
@@ -246,7 +218,7 @@ func TestGetTransactionHistoryHandler(t *testing.T) {
 
 	// Test case: Pagination parameter
 	t.Run("Pagination works correctly", func(t *testing.T) {
-		mockClient := new(MockElasticsearchClient)
+		mockClient := new(internal.MockElasticsearchClient)
 
 		// Create empty response
 		responseBody := map[string]interface{}{
@@ -276,7 +248,7 @@ func TestGetTransactionHistoryHandler(t *testing.T) {
 			})).Return(mockResponse, nil)
 
 		router := gin.New()
-		router.GET("/account/:accountNumber/history", GetTransactionHistoryHandler(mockClient))
+		router.GET("/account/:accountNumber/history", handlers.GetTransactionHistoryHandler(mockClient))
 
 		// Create request with page parameter
 		req, _ := http.NewRequest("GET", "/account/ACC123/history?page=3", nil)
@@ -286,7 +258,7 @@ func TestGetTransactionHistoryHandler(t *testing.T) {
 		// Verify response
 		assert.Equal(t, http.StatusOK, w.Code)
 
-		var response TransactionHistoryResponse
+		var response handlers.TransactionHistoryResponse
 		err := json.Unmarshal(w.Body.Bytes(), &response)
 		assert.NoError(t, err)
 		assert.Equal(t, 3, response.CurrentPage) // Should reflect page 3

@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/elastic/go-elasticsearch/v8"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/siddarth99/banking-ledger/api/handlers"
 	internal "github.com/siddarth99/banking-ledger/pkg"
@@ -12,6 +13,15 @@ import (
 
 func main() {
 	router := gin.Default()
+
+	// CORS middleware
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+	}))
 
 	// Create RabbitMQ connection
 	aqmpConn, err := internal.CreateAMQPConnection(
@@ -68,6 +78,8 @@ func main() {
 	defer res.Body.Close()
 
 	router.GET("/account/:accountNumber/transactionHistory", handlers.GetTransactionHistoryHandler(esClient))
+
+	router.GET("/account/status/:referenceId", handlers.GetAccountStatusHandler(esClient))
 
 	router.Run(":8080")
 }

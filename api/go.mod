@@ -4,9 +4,10 @@ go 1.23.3
 
 require (
 	github.com/elastic/go-elasticsearch/v8 v8.17.1
+	github.com/gin-contrib/cors v1.7.4
 	github.com/gin-gonic/gin v1.10.0
 	github.com/google/uuid v1.6.0
-	github.com/siddarth99/banking-ledger/pkg v0.0.0-20250401083904-9a8b9321ab89
+	github.com/siddarth99/banking-ledger/pkg v0.0.0-20250401100535-60411c86b4f5
 	github.com/stretchr/testify v1.10.0
 )
 

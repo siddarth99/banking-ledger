@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"net/http"
 	"time"
-	
-	internal "github.com/siddarth99/banking-ledger/pkg"
+
 	"github.com/gin-gonic/gin"
+	internal "github.com/siddarth99/banking-ledger/pkg"
 )
 
 // TransactionHistoryItem represents a single transaction in the history
