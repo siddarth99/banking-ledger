@@ -47,12 +47,12 @@ The system exposes the following RESTful endpoints:
 
 2. Start the services using Docker Compose:
    ```bash
-   docker-compose up -d
+   docker compose up -d
    ```
 
 3. Check if all services are running:
    ```bash
-   docker-compose ps
+   docker compose ps
    ```
 
 ## Using the System
@@ -143,31 +143,31 @@ If services fail to start properly:
 
 1. Check container logs:
    ```bash
-   docker-compose logs api
-   docker-compose logs worker
-   docker-compose logs transaction_processor
+   docker compose logs api
+   docker compose logs worker
+   docker compose logs transaction_processor
    ```
 
 2. Ensure all dependent services are healthy:
    ```bash
-   docker-compose ps
+   docker compose ps
    ```
 
 3. Restart services if needed:
    ```bash
-   docker-compose restart api worker transaction_processor
+   docker compose restart api worker transaction_processor
    ```
 
 ## Shutting Down
 
 To stop all services:
 ```bash
-docker-compose down
+docker compose down
 ```
 
 To stop services and remove all data volumes:
 ```bash
-docker-compose down -v
+docker compose down -v
 ```
 
 ## Architecture Discussion
